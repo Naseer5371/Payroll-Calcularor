@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Management System</title>
+    <link rel="stylesheet" href="index.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "jspdf": "https://esm.sh/jspdf@^2.5.1",
+                "html2canvas": "https://esm.sh/html2canvas@^1.4.1"
+            }
+        }
+    </script>
+    <script type="module" src="index.tsx"></script>
+</head>
+<body>
+    <header>
+        <h1>Payroll Management System</h1>
+    </header>
+    <main class="container">
+        <div class="form-container">
+            <form id="employee-form">
+                <h2 id="form-title">Add New Employee</h2>
+                <input type="hidden" id="employee-id">
+
+                <fieldset>
+                    <legend>Employee Details</legend>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="father-name">Father's Name</label>
+                        <input type="text" id="father-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cell-no">Cell No</label>
+                        <input type="tel" id="cell-no" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cnic">CNIC No</label>
+                        <input type="text" id="cnic" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointment-date">Date of Appointment</label>
+                        <input type="date" id="appointment-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="designation">Designation</label>
+                        <input type="text" id="designation" required>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Salary Details (Earnings)</legend>
+                    <div class="form-group">
+                        <label for="basic-salary">Basic Salary</label>
+                        <input type="number" id="basic-salary" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="rent-allowance">Rent Allowance</label>
+                        <input type="number" id="rent-allowance" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="travel-allowance">Travel Allowance</label>
+                        <input type="number" id="travel-allowance" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="medical-allowance">Medical Allowance</label>
+                        <input type="number" id="medical-allowance" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="adhoc-allowance">Adhoc Allowance</label>
+                        <input type="number" id="adhoc-allowance" value="0" min="0">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Deductions</legend>
+                    <div class="form-group">
+                        <label for="late-arrivals">Late Arrivals</label>
+                        <input type="number" id="late-arrivals" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="security">Security</label>
+                        <input type="number" id="security" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="leaves">Leaves</label>
+                        <input type="number" id="leaves" value="0" min="0">
+                    </div>
+                </fieldset>
+                <div class="form-actions">
+                    <button type="submit" id="form-submit-btn">Add Employee</button>
+                    <button type="button" id="form-cancel-btn" class="hidden">Cancel Edit</button>
+                </div>
+            </form>
+        </div>
+        <div class="employee-list-container">
+            <h2>Employee List</h2>
+            <div class="list-actions">
+                <button id="download-all-btn">Download All Slips</button>
+            </div>
+            <ul id="employee-list">
+                <!-- Employee items will be injected here -->
+            </ul>
+        </div>
+    </main>
+
+    <!-- Payslip Preview Modal -->
+    <div id="payslip-modal" class="modal-overlay hidden" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Payslip Preview</h3>
+                <button id="modal-close-btn" class="close-btn" aria-label="Close payslip preview">&times;</button>
+            </div>
+            <div id="payslip-preview">
+                <!-- Payslip content will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button id="download-slip-btn">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
