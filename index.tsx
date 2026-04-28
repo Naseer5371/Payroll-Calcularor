@@ -19,6 +19,7 @@ interface Employee {
     travelAllowance: number;
     medicalAllowance: number;
     adhocAllowance: number;
+    previousMonthDefault: number; // Added this
     lateArrivalsDeduction: number;
     securityDeduction: number;
     leavesDeduction: number;
@@ -44,7 +45,8 @@ const rentAllowanceInput = document.getElementById('rent-allowance') as HTMLInpu
 const travelAllowanceInput = document.getElementById('travel-allowance') as HTMLInputElement;
 const medicalAllowanceInput = document.getElementById('medical-allowance') as HTMLInputElement;
 const adhocAllowanceInput = document.getElementById('adhoc-allowance') as HTMLInputElement;
-const previousMonthDefault = document.getElementById('previous-monthdefault') as HTMLInputElement;
+// Fixed ID selection to match modern naming and fixed variable naming
+const previousMonthDefaultInput = document.getElementById('prev-month-default') as HTMLInputElement; 
 const lateArrivalsInput = document.getElementById('late-arrivals') as HTMLInputElement;
 const securityInput = document.getElementById('security') as HTMLInputElement;
 const leavesInput = document.getElementById('leaves') as HTMLInputElement;
@@ -97,7 +99,8 @@ function populateForm(employee: Employee) {
     travelAllowanceInput.value = employee.travelAllowance.toString();
     medicalAllowanceInput.value = employee.medicalAllowance.toString();
     adhocAllowanceInput.value = employee.adhocAllowance.toString();
-    previousMonthDefaultInput.value = employee.previousMonthDefault.toString();
+    // Added this line to populate field when editing
+    previousMonthDefaultInput.value = (employee.previousMonthDefault || 0).toString(); 
     lateArrivalsInput.value = employee.lateArrivalsDeduction.toString();
     securityInput.value = employee.securityDeduction.toString();
     leavesInput.value = employee.leavesDeduction.toString();
@@ -122,7 +125,8 @@ function handleFormSubmit(event: SubmitEvent) {
         travelAllowance: parseFloat(travelAllowanceInput.value) || 0,
         medicalAllowance: parseFloat(medicalAllowanceInput.value) || 0,
         adhocAllowance: parseFloat(adhocAllowanceInput.value) || 0,
-        previousMonthDefault: parseFloat(previousMonthDefault.value) || 0,
+        // Corrected mapping
+        previousMonthDefault: parseFloat(previousMonthDefaultInput.value) || 0, 
         lateArrivalsDeduction: parseFloat(lateArrivalsInput.value) || 0,
         securityDeduction: parseFloat(securityInput.value) || 0,
         leavesDeduction: parseFloat(leavesInput.value) || 0,
@@ -175,7 +179,6 @@ function handleListClick(event: MouseEvent) {
     const li = target.closest('.employee-item');
     if (!li) return;
 
-    // Fix: Cast the 'Element' returned by 'closest' to 'HTMLElement' to access its 'dataset' property.
     const id = (li as HTMLElement).dataset.id;
     if (!id) return;
 
@@ -198,7 +201,14 @@ function handleListClick(event: MouseEvent) {
 
 // --- PAYSLIP & PDF ---
 function generatePayslipContent(employee: Employee): string {
-    const totalEarnings = employee.basicSalary + employee.rentAllowance + employee.travelAllowance + employee.medicalAllowance + employee.adhocAllowance+ employee.previousMonthDefault;
+    // Added employee.previousMonthDefault to the calculation
+    const totalEarnings = employee.basicSalary + 
+                          employee.rentAllowance + 
+                          employee.travelAllowance + 
+                          employee.medicalAllowance + 
+                          employee.adhocAllowance + 
+                          (employee.previousMonthDefault || 0);
+
     const totalDeductions = employee.lateArrivalsDeduction + employee.securityDeduction + employee.leavesDeduction;
     const netSalary = totalEarnings - totalDeductions;
     const currentMonthYear = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -225,6 +235,7 @@ function generatePayslipContent(employee: Employee): string {
                         <tr><td>Travel Allowance</td><td>${employee.travelAllowance.toFixed(2)}</td></tr>
                         <tr><td>Medical Allowance</td><td>${employee.medicalAllowance.toFixed(2)}</td></tr>
                         <tr><td>Adhoc Allowance</td><td>${employee.adhocAllowance.toFixed(2)}</td></tr>
+                        <tr><td>Prev. Month Default</td><td>${(employee.previousMonthDefault || 0).toFixed(2)}</td></tr>
                         <tr class="total"><td><strong>Total Earnings</strong></td><td><strong>${totalEarnings.toFixed(2)}</strong></td></tr>
                     </tbody>
                 </table>
@@ -276,7 +287,7 @@ async function handleDownloadSlip() {
     downloadSlipButton.disabled = true;
     downloadSlipButton.textContent = 'Downloading...';
 
-    await downloadPdf(payslipPreview, `Payslip-${employee.name.replace(' ', '_')}.pdf`);
+    await downloadPdf(payslipPreview, `Payslip-${employee.name.replace(/\s+/g, '_')}.pdf`);
     
     downloadSlipButton.disabled = false;
     downloadSlipButton.textContent = 'Download PDF';
