@@ -44,6 +44,7 @@ const rentAllowanceInput = document.getElementById('rent-allowance') as HTMLInpu
 const travelAllowanceInput = document.getElementById('travel-allowance') as HTMLInputElement;
 const medicalAllowanceInput = document.getElementById('medical-allowance') as HTMLInputElement;
 const adhocAllowanceInput = document.getElementById('adhoc-allowance') as HTMLInputElement;
+const previousMonthDefault = document.getElementById('previous-monthdefault') as HTMLInputElement;
 const lateArrivalsInput = document.getElementById('late-arrivals') as HTMLInputElement;
 const securityInput = document.getElementById('security') as HTMLInputElement;
 const leavesInput = document.getElementById('leaves') as HTMLInputElement;
@@ -96,6 +97,7 @@ function populateForm(employee: Employee) {
     travelAllowanceInput.value = employee.travelAllowance.toString();
     medicalAllowanceInput.value = employee.medicalAllowance.toString();
     adhocAllowanceInput.value = employee.adhocAllowance.toString();
+    previousMonthDefaultInput.value = employee.previousMonthDefault.toString();
     lateArrivalsInput.value = employee.lateArrivalsDeduction.toString();
     securityInput.value = employee.securityDeduction.toString();
     leavesInput.value = employee.leavesDeduction.toString();
@@ -120,6 +122,7 @@ function handleFormSubmit(event: SubmitEvent) {
         travelAllowance: parseFloat(travelAllowanceInput.value) || 0,
         medicalAllowance: parseFloat(medicalAllowanceInput.value) || 0,
         adhocAllowance: parseFloat(adhocAllowanceInput.value) || 0,
+        previousMonthDefault: parseFloat(previousMonthDefault.value) || 0,
         lateArrivalsDeduction: parseFloat(lateArrivalsInput.value) || 0,
         securityDeduction: parseFloat(securityInput.value) || 0,
         leavesDeduction: parseFloat(leavesInput.value) || 0,
