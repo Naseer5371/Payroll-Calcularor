@@ -195,7 +195,7 @@ function handleListClick(event: MouseEvent) {
 
 // --- PAYSLIP & PDF ---
 function generatePayslipContent(employee: Employee): string {
-    const totalEarnings = employee.basicSalary + employee.rentAllowance + employee.travelAllowance + employee.medicalAllowance + employee.adhocAllowance;
+    const totalEarnings = employee.basicSalary + employee.rentAllowance + employee.travelAllowance + employee.medicalAllowance + employee.adhocAllowance+ employee.previousMonthDefault;
     const totalDeductions = employee.lateArrivalsDeduction + employee.securityDeduction + employee.leavesDeduction;
     const netSalary = totalEarnings - totalDeductions;
     const currentMonthYear = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
