@@ -46,7 +46,7 @@ const travelAllowanceInput = document.getElementById('travel-allowance') as HTML
 const medicalAllowanceInput = document.getElementById('medical-allowance') as HTMLInputElement;
 const adhocAllowanceInput = document.getElementById('adhoc-allowance') as HTMLInputElement;
 // Fixed ID selection to match modern naming and fixed variable naming
-const previousMonthDefaultInput = document.getElementById('prev-month-default') as HTMLInputElement; 
+const previousMonthDefaultInput = document.getElementById('prev-month-default') as HTMLInputElement;
 const lateArrivalsInput = document.getElementById('late-arrivals') as HTMLInputElement;
 const securityInput = document.getElementById('security') as HTMLInputElement;
 const leavesInput = document.getElementById('leaves') as HTMLInputElement;
@@ -126,7 +126,7 @@ function handleFormSubmit(event: SubmitEvent) {
         medicalAllowance: parseFloat(medicalAllowanceInput.value) || 0,
         adhocAllowance: parseFloat(adhocAllowanceInput.value) || 0,
         // Corrected mapping
-        previousMonthDefault: parseFloat(previousMonthDefaultInput.value) || 0, 
+        previousMonthDefault: parseFloat(previousMonthDefaultInput.value) || 0,
         lateArrivalsDeduction: parseFloat(lateArrivalsInput.value) || 0,
         securityDeduction: parseFloat(securityInput.value) || 0,
         leavesDeduction: parseFloat(leavesInput.value) || 0,
