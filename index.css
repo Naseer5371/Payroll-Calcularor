@@ -260,13 +260,33 @@ button:disabled {
 
 
 /* --- Payslip Design --- */
-#payslip-preview, .payslip-preview-for-pdf {
-    padding: 2rem;
-    border: 1px solid var(--border-color);
-    background-color: #fff;
-    font-family: 'Times New Roman', Times, serif;
+/* ==========================================================================
+   PDF & HTML2CANVAS FIXES 
+   Forces containers to fully expand vertically when rendering snapshots
+   ========================================================================== */
+
+/* 1. Prevent the preview element from shrinking or clipping */
+#payslip-preview, 
+.payslip-preview-for-pdf {
+    height: auto !important;
+    min-height: max-content !important;
+    overflow: visible !important;
+    display: block !important;
 }
 
+/* 2. Break table columns to a vertical stack if they are squeezed */
+@media (max-width: 600px) {
+    .payslip-tables {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* 3. Global override specifically when html2canvas compiles the DOM */
+.html2canvas-container {
+    height: auto !important;
+    min-height: 100% !important;
+}
 .payslip-header {
     text-align: center;
     margin-bottom: 2rem;
