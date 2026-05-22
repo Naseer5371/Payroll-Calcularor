@@ -279,21 +279,61 @@ async function downloadPdf(element: HTMLElement, filename: string) {
     pdf.save(filename);
 }
 
-async function handleDownloadSlip() {
-    if (!currentSlipEmployeeId) return;
-    const employee = employees.find(emp => emp.id === currentSlipEmployeeId);
-    if (!employee) return;
-
-    downloadSlipButton.disabled = true;
-    downloadSlipButton.textContent = 'Downloading...';
-
-    await downloadPdf(payslipPreview, `Payslip-${employee.name.replace(/\s+/g, '_')}.pdf`);
+async function handleDownloadAll() {
+    if (employees.length === 0) return;
     
-    downloadSlipButton.disabled = false;
-    downloadSlipButton.textContent = 'Download PDF';
-    closeModal();
-}
+    downloadAllButton.disabled = true;
+    downloadAllButton.textContent = 'Generating...';
 
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const tempContainer = document.createElement('div');
+    
+    // --- FIX START: Secure layout space for html2canvas ---
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '0';
+    tempContainer.style.width = '750px'; // Standard A4-ratio width in pixels
+    // --- FIX END ---
+    
+    document.body.appendChild(tempContainer);
+
+    for (let i = 0; i < employees.length; i++) {
+        const employee = employees[i];
+        if (i > 0) {
+            pdf.addPage();
+        }
+        
+        const slipContent = document.createElement('div');
+        slipContent.className = 'payslip-preview-for-pdf';
+        
+        // --- FIX START: Force full height expansion ---
+        slipContent.style.height = 'auto';
+        slipContent.style.overflow = 'visible';
+        // --- FIX END ---
+        
+        slipContent.innerHTML = generatePayslipContent(employee);
+        tempContainer.appendChild(slipContent);
+
+        const canvas = await html2canvas(slipContent, { 
+            scale: 2,
+            useCORS: true,
+            logging: false
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+        tempContainer.removeChild(slipContent);
+    }
+    
+    document.body.removeChild(tempContainer);
+    pdf.save('All_Payslips.pdf');
+    
+    downloadAllButton.disabled = false;
+    downloadAllButton.textContent = 'Download All Slips';
+}
 async function handleDownloadAll() {
     if (employees.length === 0) return;
     
