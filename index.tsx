@@ -19,7 +19,7 @@ interface Employee {
     travelAllowance: number;
     medicalAllowance: number;
     adhocAllowance: number;
-    previousMonthDefault: number; // Added this
+    previousMonthDefault: number; 
     lateArrivalsDeduction: number;
     securityDeduction: number;
     leavesDeduction: number;
@@ -45,7 +45,6 @@ const rentAllowanceInput = document.getElementById('rent-allowance') as HTMLInpu
 const travelAllowanceInput = document.getElementById('travel-allowance') as HTMLInputElement;
 const medicalAllowanceInput = document.getElementById('medical-allowance') as HTMLInputElement;
 const adhocAllowanceInput = document.getElementById('adhoc-allowance') as HTMLInputElement;
-// Fixed ID selection to match modern naming and fixed variable naming
 const previousMonthDefaultInput = document.getElementById('prev-month-default') as HTMLInputElement;
 const lateArrivalsInput = document.getElementById('late-arrivals') as HTMLInputElement;
 const securityInput = document.getElementById('security') as HTMLInputElement;
@@ -99,7 +98,6 @@ function populateForm(employee: Employee) {
     travelAllowanceInput.value = employee.travelAllowance.toString();
     medicalAllowanceInput.value = employee.medicalAllowance.toString();
     adhocAllowanceInput.value = employee.adhocAllowance.toString();
-    // Added this line to populate field when editing
     previousMonthDefaultInput.value = (employee.previousMonthDefault || 0).toString(); 
     lateArrivalsInput.value = employee.lateArrivalsDeduction.toString();
     securityInput.value = employee.securityDeduction.toString();
@@ -125,7 +123,6 @@ function handleFormSubmit(event: SubmitEvent) {
         travelAllowance: parseFloat(travelAllowanceInput.value) || 0,
         medicalAllowance: parseFloat(medicalAllowanceInput.value) || 0,
         adhocAllowance: parseFloat(adhocAllowanceInput.value) || 0,
-        // Corrected mapping
         previousMonthDefault: parseFloat(previousMonthDefaultInput.value) || 0,
         lateArrivalsDeduction: parseFloat(lateArrivalsInput.value) || 0,
         securityDeduction: parseFloat(securityInput.value) || 0,
@@ -201,7 +198,6 @@ function handleListClick(event: MouseEvent) {
 
 // --- PAYSLIP & PDF ---
 function generatePayslipContent(employee: Employee): string {
-    // Added employee.previousMonthDefault to the calculation
     const totalEarnings = employee.basicSalary + 
                           employee.rentAllowance + 
                           employee.travelAllowance + 
@@ -256,7 +252,6 @@ function generatePayslipContent(employee: Employee): string {
     `;
 }
 
-
 function generatePayslip(employee: Employee) {
     currentSlipEmployeeId = employee.id;
     payslipPreview.innerHTML = generatePayslipContent(employee);
@@ -279,6 +274,7 @@ async function downloadPdf(element: HTMLElement, filename: string) {
     pdf.save(filename);
 }
 
+// Single handler implementation to ensure sizing rules aren't overwritten
 async function handleDownloadAll() {
     if (employees.length === 0) return;
     
@@ -288,12 +284,10 @@ async function handleDownloadAll() {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const tempContainer = document.createElement('div');
     
-    // --- FIX START: Secure layout space for html2canvas ---
     tempContainer.style.position = 'absolute';
     tempContainer.style.left = '-9999px';
     tempContainer.style.top = '0';
-    tempContainer.style.width = '750px'; // Standard A4-ratio width in pixels
-    // --- FIX END ---
+    tempContainer.style.width = '750px'; 
     
     document.body.appendChild(tempContainer);
 
@@ -305,11 +299,8 @@ async function handleDownloadAll() {
         
         const slipContent = document.createElement('div');
         slipContent.className = 'payslip-preview-for-pdf';
-        
-        // --- FIX START: Force full height expansion ---
         slipContent.style.height = 'auto';
         slipContent.style.overflow = 'visible';
-        // --- FIX END ---
         
         slipContent.innerHTML = generatePayslipContent(employee);
         tempContainer.appendChild(slipContent);
@@ -334,45 +325,15 @@ async function handleDownloadAll() {
     downloadAllButton.disabled = false;
     downloadAllButton.textContent = 'Download All Slips';
 }
-async function handleDownloadAll() {
-    if (employees.length === 0) return;
-    
-    downloadAllButton.disabled = true;
-    downloadAllButton.textContent = 'Generating...';
 
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'absolute';
-    tempContainer.style.left = '-9999px';
-    document.body.appendChild(tempContainer);
-
-    for (let i = 0; i < employees.length; i++) {
-        const employee = employees[i];
-        if (i > 0) {
-            pdf.addPage();
-        }
-        
-        const slipContent = document.createElement('div');
-        slipContent.className = 'payslip-preview-for-pdf';
-        slipContent.innerHTML = generatePayslipContent(employee);
-        tempContainer.appendChild(slipContent);
-
-        const canvas = await html2canvas(slipContent, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-
-        tempContainer.removeChild(slipContent);
+// Fallback logic for downloading individual open slips from modal
+async function handleDownloadSlip() {
+    if (!currentSlipEmployeeId) return;
+    const employee = employees.find(emp => emp.id === currentSlipEmployeeId);
+    if (employee) {
+        await downloadPdf(payslipPreview, `${employee.name.replace(/\s+/g, '_')}_Payslip.pdf`);
     }
-    
-    document.body.removeChild(tempContainer);
-    pdf.save('All_Payslips.pdf');
-    
-    downloadAllButton.disabled = false;
-    downloadAllButton.textContent = 'Download All Slips';
 }
-
 
 // --- INITIALIZATION ---
 function init() {
@@ -383,7 +344,6 @@ function init() {
     downloadSlipButton.addEventListener('click', handleDownloadSlip);
     downloadAllButton.addEventListener('click', handleDownloadAll);
 
-    // Close modal on outside click
     payslipModal.addEventListener('click', (event) => {
         if (event.target === payslipModal) {
             closeModal();
@@ -394,5 +354,4 @@ function init() {
     renderEmployeeList();
 }
 
-// Start the app
 init();
