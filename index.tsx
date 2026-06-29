@@ -274,7 +274,7 @@ async function downloadPdf(element: HTMLElement, filename: string) {
     pdf.save(filename);
 }
 
-// Single handler implementation to ensure sizing rules aren't overwritten
+// Fixed handler ensuring complete heights and synchronous layout compilation
 async function handleDownloadAll() {
     if (employees.length === 0) return;
     
@@ -287,7 +287,7 @@ async function handleDownloadAll() {
     tempContainer.style.position = 'absolute';
     tempContainer.style.left = '-9999px';
     tempContainer.style.top = '0';
-    tempContainer.style.width = '750px'; 
+    tempContainer.style.width = '800px'; 
     
     document.body.appendChild(tempContainer);
 
@@ -299,16 +299,27 @@ async function handleDownloadAll() {
         
         const slipContent = document.createElement('div');
         slipContent.className = 'payslip-preview-for-pdf';
+        
+        // Explicit layout block forcing structural expansion
+        slipContent.style.display = 'block';
         slipContent.style.height = 'auto';
-        slipContent.style.overflow = 'visible';
+        slipContent.style.minHeight = '1050px'; 
+        slipContent.style.paddingBottom = '45px'; 
+        slipContent.style.backgroundColor = '#ffffff';
         
         slipContent.innerHTML = generatePayslipContent(employee);
         tempContainer.appendChild(slipContent);
 
+        // Synchronous frame-buffer recovery layout pause
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         const canvas = await html2canvas(slipContent, { 
             scale: 2,
             useCORS: true,
-            logging: false
+            logging: false,
+            windowWidth: 800,
+            scrollX: 0,
+            scrollY: 0
         });
         
         const imgData = canvas.toDataURL('image/png');
