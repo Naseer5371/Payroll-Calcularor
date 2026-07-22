@@ -18,7 +18,8 @@ interface Employee {
     rentAllowance: number;
     travelAllowance: number;
     medicalAllowance: number;
-    adhocAllowance 2025: number;
+    adhocAllowance: number;
+    adhocAllowance2026: number; // <-- Added Adhoc Allowance 2026
     previousMonthDefault: number; 
     lateArrivalsDeduction: number;
     securityDeduction: number;
@@ -45,6 +46,7 @@ const rentAllowanceInput = document.getElementById('rent-allowance') as HTMLInpu
 const travelAllowanceInput = document.getElementById('travel-allowance') as HTMLInputElement;
 const medicalAllowanceInput = document.getElementById('medical-allowance') as HTMLInputElement;
 const adhocAllowanceInput = document.getElementById('adhoc-allowance') as HTMLInputElement;
+const adhocAllowance2026Input = document.getElementById('adhoc-allowance-2026') as HTMLInputElement; // <-- Added DOM Ref
 const previousMonthDefaultInput = document.getElementById('prev-month-default') as HTMLInputElement;
 const lateArrivalsInput = document.getElementById('late-arrivals') as HTMLInputElement;
 const securityInput = document.getElementById('security') as HTMLInputElement;
@@ -98,6 +100,7 @@ function populateForm(employee: Employee) {
     travelAllowanceInput.value = employee.travelAllowance.toString();
     medicalAllowanceInput.value = employee.medicalAllowance.toString();
     adhocAllowanceInput.value = employee.adhocAllowance.toString();
+    adhocAllowance2026Input.value = (employee.adhocAllowance2026 || 0).toString(); // <-- Populating field
     previousMonthDefaultInput.value = (employee.previousMonthDefault || 0).toString(); 
     lateArrivalsInput.value = employee.lateArrivalsDeduction.toString();
     securityInput.value = employee.securityDeduction.toString();
@@ -123,6 +126,7 @@ function handleFormSubmit(event: SubmitEvent) {
         travelAllowance: parseFloat(travelAllowanceInput.value) || 0,
         medicalAllowance: parseFloat(medicalAllowanceInput.value) || 0,
         adhocAllowance: parseFloat(adhocAllowanceInput.value) || 0,
+        adhocAllowance2026: parseFloat(adhocAllowance2026Input.value) || 0, // <-- Processing submitted value
         previousMonthDefault: parseFloat(previousMonthDefaultInput.value) || 0,
         lateArrivalsDeduction: parseFloat(lateArrivalsInput.value) || 0,
         securityDeduction: parseFloat(securityInput.value) || 0,
@@ -203,6 +207,7 @@ function generatePayslipContent(employee: Employee): string {
                           employee.travelAllowance + 
                           employee.medicalAllowance + 
                           employee.adhocAllowance + 
+                          (employee.adhocAllowance2026 || 0) + // <-- Added to total earnings calculation
                           (employee.previousMonthDefault || 0);
 
     const totalDeductions = employee.lateArrivalsDeduction + employee.securityDeduction + employee.leavesDeduction;
@@ -231,6 +236,7 @@ function generatePayslipContent(employee: Employee): string {
                         <tr><td>Travel Allowance</td><td>${employee.travelAllowance.toFixed(2)}</td></tr>
                         <tr><td>Medical Allowance</td><td>${employee.medicalAllowance.toFixed(2)}</td></tr>
                         <tr><td>Adhoc Allowance</td><td>${employee.adhocAllowance.toFixed(2)}</td></tr>
+                        <tr><td>Adhoc Allowance 2026</td><td>${(employee.adhocAllowance2026 || 0).toFixed(2)}</td></tr>
                         <tr><td>Prev. Month Default</td><td>${(employee.previousMonthDefault || 0).toFixed(2)}</td></tr>
                         <tr class="total"><td><strong>Total Earnings</strong></td><td><strong>${totalEarnings.toFixed(2)}</strong></td></tr>
                     </tbody>
