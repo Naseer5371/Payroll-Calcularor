@@ -18,7 +18,7 @@ interface Employee {
     rentAllowance: number;
     travelAllowance: number;
     medicalAllowance: number;
-    adhocAllowance: number;
+    adhocAllowance 2025: number;
     previousMonthDefault: number; 
     lateArrivalsDeduction: number;
     securityDeduction: number;
